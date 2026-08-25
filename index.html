@@ -39,6 +39,7 @@
   }
 
   *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
   html,body{margin:0;padding:0;}
   body{
     background:var(--parchment);
@@ -212,7 +213,72 @@
     letter-spacing:.5px;
   }
 
-  /* ============ 갤러리 ============ */
+  /* ============ 웨딩 캘린더 ============ */
+  .calendar{padding:0 30px;text-align:center;}
+  .cal-card{
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:var(--white);
+    padding:20px 16px;
+  }
+  .cal-weekdays{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    margin-bottom:6px;
+  }
+  .cal-weekdays span{
+    font-size:11px;
+    font-weight:600;
+    color:var(--ink-soft);
+  }
+  .cal-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    row-gap:4px;
+  }
+  .cal-cell,.cal-empty{
+    position:relative;
+    height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    color:var(--ink);
+  }
+  .cal-wedding-day{
+    font-weight:700;
+    color:var(--white);
+  }
+  .cal-wedding-day .cal-num{
+    position:relative;
+    z-index:1;
+  }
+  .cal-wedding-day::before{
+    content:'';
+    position:absolute;
+    width:30px;height:30px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--moss), var(--moss-deep));
+    box-shadow:0 3px 10px rgba(156,79,98,.4);
+    z-index:0;
+  }
+  .cal-heart{
+    position:absolute;
+    top:-7px;
+    left:50%;
+    transform:translateX(-50%);
+    width:13px;height:13px;
+    color:var(--clay);
+    z-index:2;
+  }
+  .cal-heart svg{width:100%;height:100%;}
+  .cal-caption{
+    margin-top:16px;
+    font-size:14px;
+    color:var(--ink-soft);
+    letter-spacing:.3px;
+  }
+
   .gallery{padding:0 0 8px;}
   .gallery-inner{padding:0 24px;}
   .gallery-viewport{
@@ -731,6 +797,34 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+  /* ============ 청첩장 공유하기 ============ */
+  .share{padding:0 30px;text-align:center;}
+  .share-actions{
+    display:flex;
+    gap:10px;
+  }
+  .share-btn{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    padding:14px 10px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--white);
+    color:var(--ink);
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .share-btn svg{width:17px;height:17px;flex-shrink:0;}
+  .share-kakao{
+    background:#FEE500;
+    border-color:#FEE500;
+    color:#3C1E1E;
+  }
+
   /* ============ 푸터 ============ */
   .footer{
     text-align:center;
@@ -785,6 +879,7 @@
     box-shadow:0 8px 22px rgba(43,51,43,.18);
   }
   .music-toggle,.music-mute{
+    position:relative;
     width:34px;height:34px;
     flex-shrink:0;
     border:none;
@@ -793,25 +888,90 @@
     color:var(--ink);
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
+    overflow:visible;
   }
-  .music-toggle svg,.music-mute svg{width:15px;height:15px;}
+  .music-toggle svg,.music-mute svg{width:15px;height:15px;position:relative;z-index:1;}
+
+  /* 재생 중일 때 퍼져나가는 파장 효과 */
+  .music-toggle::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    border:1.5px solid var(--moss);
+    opacity:0;
+    pointer-events:none;
+  }
+  .music-player.playing .music-toggle::after{
+    animation: musicRipple 1.8s ease-out infinite;
+  }
+  @keyframes musicRipple{
+    0%{ opacity:.6; transform:scale(1); }
+    100%{ opacity:0; transform:scale(1.7); }
+  }
+  .music-wave{
+    display:none;
+    align-items:flex-end;
+    gap:2px;
+    height:13px;
+  }
+  .music-player.playing .music-toggle .music-wave{display:flex;}
+  .music-player.playing .music-toggle svg{display:none;}
+  .music-wave i{
+    display:block;
+    width:2.4px;
+    border-radius:1px;
+    background:currentColor;
+    animation: musicWave .9s ease-in-out infinite;
+  }
+  .music-wave i:nth-child(1){height:5px;animation-delay:-.6s;}
+  .music-wave i:nth-child(2){height:11px;animation-delay:-.3s;}
+  .music-wave i:nth-child(3){height:7px;animation-delay:0s;}
+  @keyframes musicWave{
+    0%,100%{transform:scaleY(.4);}
+    50%{transform:scaleY(1);}
+  }
+
+  /* 음량 조절 팝오버 — 버튼 위쪽에서 세로로 펼쳐짐 */
+  .music-mute-wrap{position:relative;flex-shrink:0;}
+  .music-volume-popover{
+    position:absolute;
+    left:50%;
+    bottom:calc(100% + 12px);
+    transform:translateX(-50%) translateY(6px) scale(.92);
+    transform-origin:bottom center;
+    display:flex;
+    justify-content:center;
+    padding:14px 11px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(43,51,43,.18);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .music-volume-popover::after{
+    content:'';
+    position:absolute;
+    top:100%;left:50%;
+    transform:translateX(-50%);
+    border:6px solid transparent;
+    border-top-color:var(--white);
+  }
+  .music-volume-popover.show{
+    opacity:1;
+    pointer-events:auto;
+    transform:translateX(-50%) translateY(0) scale(1);
+  }
   .music-volume{
-    width:0;
-    height:3px;
+    -webkit-appearance:slider-vertical;
+    writing-mode:vertical-lr;
+    direction:rtl;
+    width:4px;
+    height:84px;
     accent-color:var(--moss);
     cursor:pointer;
-    opacity:0;
-    margin-left:0;
-    overflow:hidden;
-    transition:width .22s ease, opacity .22s ease, margin-left .22s ease;
-  }
-  .music-volume.show{
-    width:64px;
-    opacity:1;
-    margin-left:2px;
-  }
-  @media (max-width:360px){
-    .music-volume.show{width:44px;}
   }
 
   /* ============ RSVP 모달 ============ */
@@ -975,6 +1135,36 @@
       귀한 걸음 하시어 축복해 주시면<br>
       더없이 큰 기쁨으로 간직하겠습니다.
     </p>
+  </section>
+
+  <div class="divider reveal">
+    <svg viewBox="0 0 120 22" fill="none"><path d="M2 11 C 30 -4, 45 26, 60 11 S 90 -4, 118 11" stroke="#C97B8C" stroke-width="1"/><circle cx="60" cy="11" r="2.4" fill="#C7A08F"/></svg>
+  </div>
+
+  <!-- ============ 웨딩 캘린더 ============ -->
+  <section class="calendar reveal">
+    <p class="section-eyebrow">Wedding Day</p>
+    <h2 class="section-title">2027년 3월</h2>
+
+    <div class="cal-card">
+      <div class="cal-weekdays">
+        <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+      </div>
+      <div class="cal-grid">
+        <span class="cal-empty"></span><span class="cal-cell">1</span><span class="cal-cell">2</span><span class="cal-cell">3</span><span class="cal-cell">4</span><span class="cal-cell">5</span><span class="cal-cell">6</span>
+        <span class="cal-cell cal-wedding-day">
+          <span class="cal-heart" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.5s-7.6-4.7-10-9C.4 8 1.6 4.8 4.5 3.8c2-.7 4 0 5.2 1.8l2.3 3.4 2.3-3.4c1.2-1.8 3.2-2.5 5.2-1.8 2.9 1 4.1 4.2 2.5 7.7-2.4 4.3-10 9-10 9z" fill="currentColor"/></svg>
+          </span>
+          <span class="cal-num">7</span>
+        </span>
+        <span class="cal-cell">8</span><span class="cal-cell">9</span><span class="cal-cell">10</span><span class="cal-cell">11</span><span class="cal-cell">12</span><span class="cal-cell">13</span>
+        <span class="cal-cell">14</span><span class="cal-cell">15</span><span class="cal-cell">16</span><span class="cal-cell">17</span><span class="cal-cell">18</span><span class="cal-cell">19</span><span class="cal-cell">20</span>
+        <span class="cal-cell">21</span><span class="cal-cell">22</span><span class="cal-cell">23</span><span class="cal-cell">24</span><span class="cal-cell">25</span><span class="cal-cell">26</span><span class="cal-cell">27</span>
+        <span class="cal-cell">28</span><span class="cal-cell">29</span><span class="cal-cell">30</span><span class="cal-cell">31</span><span class="cal-empty"></span><span class="cal-empty"></span><span class="cal-empty"></span>
+      </div>
+    </div>
+    <p class="cal-caption serif">2027년 3월 7일 일요일, 두 사람이 하나 되는 날입니다</p>
   </section>
 
   <div class="divider reveal">
@@ -1241,6 +1431,26 @@
     </div>
   </section>
 
+  <div class="divider reveal">
+    <svg viewBox="0 0 120 22" fill="none"><path d="M2 11 C 30 -4, 45 26, 60 11 S 90 -4, 118 11" stroke="#C97B8C" stroke-width="1"/><circle cx="60" cy="11" r="2.4" fill="#C7A08F"/></svg>
+  </div>
+
+  <!-- ============ 청첩장 공유하기 ============ -->
+  <section class="share reveal">
+    <p class="section-eyebrow">Share</p>
+    <h2 class="section-title">청첩장 공유하기</h2>
+    <div class="share-actions">
+      <button class="share-btn share-kakao" id="shareKakaoBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5C6.75 3.5 2.5 6.9 2.5 11.1c0 2.66 1.72 5 4.32 6.34-.19.7-.7 2.58-.8 2.98-.13.5.18.49.38.35.16-.1 2.5-1.7 3.52-2.4.68.1 1.38.15 2.08.15 5.25 0 9.5-3.4 9.5-7.6S17.25 3.5 12 3.5z" fill="currentColor"/></svg>
+        카카오톡 공유
+      </button>
+      <button class="share-btn share-link" id="shareLinkBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9.5 14.5l5-5M8.7 12.3l-1.4 1.4a3 3 0 0 0 4.24 4.24l2.1-2.1M15.3 11.7l1.4-1.4a3 3 0 0 0-4.24-4.24l-2.1 2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        링크 공유
+      </button>
+    </div>
+  </section>
+
   <!-- ============ 푸터 ============ -->
   <footer class="footer reveal">
     <p class="footer-line">
@@ -1256,20 +1466,25 @@
 
 <!-- ============ 배경음악 ============ -->
 <!-- ⚠️ 저작권 문제로 실제 음원 파일은 넣지 않았습니다.
-     본인이 사용권이 있는 mp3 파일을 리포지토리의 audio/bgm.mp3 경로에 올려주세요. -->
+     본인이 사용권이 있는 mp3 파일을 index.html과 같은 위치에 bgm.mp3 라는 이름으로 올려주세요. -->
 <audio id="bgm" loop preload="none">
   <source src="bgm.mp3" type="audio/mpeg">
 </audio>
 <div class="music-player" id="musicPlayer">
   <button class="music-toggle" id="musicToggle" type="button" aria-label="음악 재생/일시정지">
+    <span class="music-wave" aria-hidden="true"><i></i><i></i><i></i></span>
     <svg id="musicIconPlay" viewBox="0 0 24 24" fill="none"><path d="M9 6.5v11l9-5.5-9-5.5z" fill="currentColor"/></svg>
-    <svg id="musicIconPause" viewBox="0 0 24 24" fill="none" hidden><rect x="7" y="6" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="13.6" y="6" width="3.4" height="12" rx="1" fill="currentColor"/></svg>
+    <svg id="musicIconPause" viewBox="0 0 24 24" fill="none" style="display:none"><rect x="7" y="6" width="3.4" height="12" rx="1" fill="currentColor"/><rect x="13.6" y="6" width="3.4" height="12" rx="1" fill="currentColor"/></svg>
   </button>
-  <button class="music-mute" id="musicMute" type="button" aria-label="음소거">
-    <svg id="musicIconSound" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9c1 1 1 5 0 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    <svg id="musicIconMuted" viewBox="0 0 24 24" fill="none" hidden><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M15.5 9.5l4 4M19.5 9.5l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-  </button>
-  <input class="music-volume" id="musicVolume" type="range" min="0" max="100" value="60" aria-label="음량 조절">
+  <div class="music-mute-wrap">
+    <div class="music-volume-popover" id="musicVolumePopover">
+      <input class="music-volume" id="musicVolume" type="range" min="0" max="100" value="60" orient="vertical" aria-label="음량 조절">
+    </div>
+    <button class="music-mute" id="musicMute" type="button" aria-label="음소거">
+      <svg id="musicIconSound" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9c1 1 1 5 0 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <svg id="musicIconMuted" viewBox="0 0 24 24" fill="none" style="display:none"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M15.5 9.5l4 4M19.5 9.5l-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
 </div>
 
 <!-- ============ 참석 여부 전달 (RSVP) ============ -->
@@ -1330,6 +1545,11 @@
      방명록이 실제로 저장/공유됩니다. 설정 방법은 채팅 안내를 참고하세요.
      이 값들(project URL, anon key)은 공개되어도 되는 값입니다(비밀키 아님) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ============ 카카오톡 공유하기용 SDK ============
+     ⚠️ 아래 JS 코드의 KAKAO_JS_KEY를 본인의 카카오 개발자 앱 JavaScript 키로
+     교체해야 카카오톡 공유가 실제로 동작합니다. 설정 방법은 채팅 안내를 참고하세요. -->
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"></script>
 
 <script>
 (function(){
@@ -1691,6 +1911,7 @@
   var musicToggle = document.getElementById('musicToggle');
   var musicMute = document.getElementById('musicMute');
   var musicVolume = document.getElementById('musicVolume');
+  var musicVolumePopover = document.getElementById('musicVolumePopover');
   var iconPlay = document.getElementById('musicIconPlay');
   var iconPause = document.getElementById('musicIconPause');
   var iconSound = document.getElementById('musicIconSound');
@@ -1701,31 +1922,39 @@
     bgm.volume = 0.6;
 
     // 1, 2: 재생 중엔 일시정지 아이콘만, 일시정지 중엔 재생 아이콘만 노출
+    // (SVG 요소는 일부 인앱 브라우저에서 .hidden 프로퍼티가 제대로 동작하지 않아
+    //  인라인 style.display만으로 제어합니다)
+    function setIconVisible(el, visible){
+      el.style.display = visible ? '' : 'none';
+    }
+    function updatePlayIcon(){
+      var playing = !bgm.paused;
+      setIconVisible(iconPlay, !playing);
+      setIconVisible(iconPause, playing);
+      musicPlayer.classList.toggle('playing', playing);
+    }
     musicToggle.addEventListener('click', function(){
       if (bgm.paused) {
-        bgm.play().catch(function(){
+        bgm.play().then(updatePlayIcon).catch(function(){
           showToast('음악 파일을 아직 추가하지 않으셨어요');
         });
-        iconPlay.hidden = true;
-        iconPause.hidden = false;
       } else {
         bgm.pause();
-        iconPlay.hidden = false;
-        iconPause.hidden = true;
       }
+      updatePlayIcon();
     });
 
     // 5, 6: 볼륨 ON이면 소리 아이콘만, OFF(음소거)면 음소거 아이콘만 노출
     function updateMuteIcon(){
-      iconSound.hidden = bgm.muted;
-      iconMuted.hidden = !bgm.muted;
+      setIconVisible(iconSound, !bgm.muted);
+      setIconVisible(iconMuted, bgm.muted);
     }
 
-    // 3, 4: 슬라이더가 숨겨진 상태에서 아이콘 클릭 → 슬라이더만 노출 (음소거 상태는 그대로)
-    //       슬라이더가 이미 보이는 상태에서 아이콘 클릭 → 음소거 ON/OFF 전환
+    // 3, 4: 팝오버가 숨겨진 상태에서 아이콘 클릭 → 세로 슬라이더 팝오버만 노출 (음소거 상태는 그대로)
+    //       팝오버가 이미 보이는 상태에서 아이콘 클릭 → 음소거 ON/OFF 전환
     musicMute.addEventListener('click', function(){
-      if (!musicVolume.classList.contains('show')) {
-        musicVolume.classList.add('show');
+      if (!musicVolumePopover.classList.contains('show')) {
+        musicVolumePopover.classList.add('show');
         return;
       }
       bgm.muted = !bgm.muted;
@@ -1739,10 +1968,10 @@
       updateMuteIcon();
     });
 
-    // 플레이어 바깥을 누르면 슬라이더 다시 접기
+    // 플레이어 바깥을 누르면 팝오버 다시 접기
     document.addEventListener('click', function(e){
-      if (musicVolume.classList.contains('show') && !musicPlayer.contains(e.target)) {
-        musicVolume.classList.remove('show');
+      if (musicVolumePopover.classList.contains('show') && !musicPlayer.contains(e.target)) {
+        musicVolumePopover.classList.remove('show');
       }
     });
   }
@@ -1963,6 +2192,61 @@
     gbForm.addEventListener('submit', function(e){
       e.preventDefault();
       showToast('방명록 연결 설정이 아직 필요합니다');
+    });
+  }
+
+  /* ---------- 청첩장 공유하기 (카카오톡 / 링크) ---------- */
+  // ⚠️ 카카오 개발자(developers.kakao.com)에서 발급받은 JavaScript 키로 교체해야
+  //    카카오톡 공유가 실제로 동작합니다. 설정 방법은 채팅 안내를 참고하세요.
+  var KAKAO_JS_KEY = 'a67852ffe6ceab14e81be9cd864c9fd8';
+  var KAKAO_READY = KAKAO_JS_KEY.indexOf('REPLACE_WITH') === -1;
+
+  var shareKakaoBtn = document.getElementById('shareKakaoBtn');
+  var shareLinkBtn = document.getElementById('shareLinkBtn');
+
+  function getMeta(name){
+    var el = document.querySelector('meta[property="' + name + '"]');
+    return el ? el.getAttribute('content') : '';
+  }
+
+  if (shareKakaoBtn) {
+    shareKakaoBtn.addEventListener('click', function(){
+      if (!KAKAO_READY || typeof Kakao === 'undefined') {
+        showToast('카카오톡 공유 연결 설정이 아직 필요합니다');
+        return;
+      }
+      try {
+        if (!Kakao.isInitialized()) { Kakao.init(KAKAO_JS_KEY); }
+        Kakao.Share.sendDefault({
+          objectType: 'feed',
+          content: {
+            title: getMeta('og:title') || '모바일 청첩장',
+            description: getMeta('og:description') || '',
+            imageUrl: getMeta('og:image') || '',
+            link: { mobileWebUrl: window.location.href, webUrl: window.location.href }
+          },
+          buttons: [{
+            title: '청첩장 보기',
+            link: { mobileWebUrl: window.location.href, webUrl: window.location.href }
+          }]
+        });
+      } catch (err) {
+        showToast('카카오톡 공유에 실패했습니다');
+      }
+    });
+  }
+
+  if (shareLinkBtn) {
+    shareLinkBtn.addEventListener('click', function(){
+      if (navigator.share) {
+        navigator.share({
+          title: getMeta('og:title') || '모바일 청첩장',
+          text: getMeta('og:description') || '',
+          url: window.location.href
+        }).catch(function(){});
+      } else {
+        copyText(window.location.href);
+      }
     });
   }
 
