@@ -1,0 +1,26 @@
+name: Keep Supabase Alive
+
+# Supabase 무료 플랜은 7일간 API 요청이 없으면 프로젝트가 자동으로
+# 일시정지됩니다. 이 워크플로우는 3일마다 방명록 테이블에 아주 가벼운
+# 조회(SELECT) 요청 하나만 보내서 "활동 중"인 상태를 유지시켜줍니다.
+# 데이터를 추가하거나 지우지 않으므로 방명록 화면에는 아무 영향이 없습니다.
+
+'on':
+  schedule:
+    - cron: '0 3 */3 * *'   # 3일마다 (UTC 03:00 = 한국시간 정오 12:00)
+  workflow_dispatch: {}      # Actions 탭에서 수동으로도 바로 실행해볼 수 있게 해줌
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supabase에 가벼운 조회 요청 보내기
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://wuejeqoyngwbzfwuqjbr.supabase.co/rest/v1/guestbook?select=id&limit=1" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1ZWplcW95bmd3Ynpmd3VxamJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNzY1ODEsImV4cCI6MjEwMjc1MjU4MX0.Bv49vLyCeud955qqfv0Rp4kI2LY4c93gk7I5oLjHJB8" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1ZWplcW95bmd3Ynpmd3VxamJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNzY1ODEsImV4cCI6MjEwMjc1MjU4MX0.Bv49vLyCeud955qqfv0Rp4kI2LY4c93gk7I5oLjHJB8")
+          echo "Supabase 응답 코드: $STATUS"
+          if [ "$STATUS" -ge 400 ]; then
+            echo "::warning::Supabase 요청이 실패했습니다 (코드 $STATUS). 프로젝트가 일시정지되었거나 키가 바뀌었을 수 있어요."
+          fi
