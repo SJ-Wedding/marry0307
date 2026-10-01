@@ -689,28 +689,14 @@
 
   .parent-inline{
     margin-top:0;
+    padding-top:10px;
     border-top:1px solid var(--line);
   }
-  .parent-summary{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:6px 0 2px;
-    cursor:pointer;
-    list-style:none;
-  }
-  .parent-summary::-webkit-details-marker{display:none;}
-  .parent-summary .contact-role{margin-bottom:0;}
-  .parent-chevron{
-    width:16px;height:16px;
-    color:var(--ink-soft);
-    transition:transform .25s ease;
-  }
-  .parent-inline[open] .parent-chevron{transform:rotate(180deg);}
+  .parent-inline .contact-role{margin-bottom:8px;}
   .parent-split{
     display:flex;
     gap:12px;
-    padding:8px 0 4px;
+    padding:0 0 4px;
   }
   .parent-col{
     flex:1;
@@ -1117,7 +1103,6 @@
     <div class="hero-bg" id="heroBg"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-emblem">S · J</div>
       <p class="hero-eyebrow">WE ARE GETTING MARRIED</p>
       <h1 class="hero-title serif">결혼합니다</h1>
       <p class="hero-names script">Suhyeon &amp; Jihyun</p>
@@ -1340,11 +1325,8 @@
         </div>
       </div>
 
-      <details class="parent-inline">
-        <summary class="parent-summary">
-          <span class="contact-role">혼주 보기</span>
-          <svg class="parent-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </summary>
+      <div class="parent-inline">
+        <p class="contact-role">혼주</p>
         <div class="parent-split">
           <div class="parent-col">
             <div class="contact-person small">아버지 안ㅇㅇ</div>
@@ -1359,7 +1341,7 @@
             </a>
           </div>
         </div>
-      </details>
+      </div>
     </div>
 
     <div class="contact-card">
@@ -1388,11 +1370,8 @@
         </div>
       </div>
 
-      <details class="parent-inline">
-        <summary class="parent-summary">
-          <span class="contact-role">혼주 보기</span>
-          <svg class="parent-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </summary>
+      <div class="parent-inline">
+        <p class="contact-role">혼주</p>
         <div class="parent-split">
           <div class="parent-col">
             <div class="contact-person small">아버지 윤ㅇㅇ</div>
@@ -1407,7 +1386,7 @@
             </a>
           </div>
         </div>
-      </details>
+      </div>
     </div>
   </section>
 
